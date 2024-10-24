@@ -5,7 +5,8 @@ const App = () => {
   const x = "X";
   const o = "O";
 
-  const winConditions = [
+  // Memoize winConditions
+  const winConditions = React.useMemo(() => [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
@@ -14,7 +15,7 @@ const App = () => {
     [2, 5, 8],
     [0, 4, 8],
     [2, 4, 6],
-  ];
+  ], []);
 
   const [options, setOptions] = useState(Array(9).fill(""));
   const [currentPlayer, setCurrentPlayer] = useState(x);
@@ -34,7 +35,7 @@ const App = () => {
       setStatus("Game Draw!");
       setRunning(false);
     }
-  }, [options, winConditions]); // Added winConditions here
+  }, [options, winConditions]); // winConditions is now stable
 
   useEffect(() => {
     checkWinner();
