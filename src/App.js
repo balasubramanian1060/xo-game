@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
 const App = () => {
@@ -21,13 +21,28 @@ const App = () => {
   const [status, setStatus] = useState(`${x} Your Turn`);
   const [running, setRunning] = useState(true);
 
+  const checkWinner = useCallback(() => {
+    for (let condition of winConditions) {
+      const [a, b, c] = condition;
+      if (options[a] && options[a] === options[b] && options[a] === options[c]) {
+        setStatus(`${options[a]} You Won!`);
+        setRunning(false);
+        return;
+      }
+    }
+    if (!options.includes("")) {
+      setStatus("Game Draw!");
+      setRunning(false);
+    }
+  }, [options]);
+
   useEffect(() => {
     checkWinner();
-  }, [options]);
+  }, [checkWinner]);
 
   const boxClick = (index) => {
     if (options[index] !== "" || !running) return;
-    
+
     const newOptions = [...options];
     newOptions[index] = currentPlayer;
     setOptions(newOptions);
@@ -39,23 +54,6 @@ const App = () => {
     setStatus(`${currentPlayer === x ? o : x} Your Turn`);
   };
 
-  const checkWinner = () => {
-    let isWon = false;
-    for (let condition of winConditions) {
-      const [a, b, c] = condition;
-      if (options[a] && options[a] === options[b] && options[a] === options[c]) {
-        isWon = true;
-        setStatus(`${options[a]} You Won!`);
-        setRunning(false);
-        return;
-      }
-    }
-    if (!options.includes("")) {
-      setStatus("Game Draw!");
-      setRunning(false);
-    }
-  };
-
   const restartGame = () => {
     setOptions(Array(9).fill(""));
     setCurrentPlayer(x);
@@ -65,20 +63,19 @@ const App = () => {
 
   return (
     <div className="App">
-    <div className="container">
-      <div className="grid">
-        {options.map((value, index) => (
-          <div key={index} className="box" onClick={() => boxClick(index)}>
-            {value}
-          </div>
-        ))}
+      <div className="container">
+        <div className="grid">
+          {options.map((value, index) => (
+            <div key={index} className="box" onClick={() => boxClick(index)}>
+              {value}
+            </div>
+          ))}
+        </div>
+        <div id="status">{status}</div>
+        <button id="restart" onClick={restartGame}>Restart</button>
       </div>
-      <div id="status">{status}</div>
-      <button id="restart" onClick={restartGame}>Restart</button>
     </div>
-  </div>
-);
+  );
 };
-
 
 export default App;
