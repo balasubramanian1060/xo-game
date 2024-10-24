@@ -34,7 +34,7 @@ const App = () => {
       setStatus("Game Draw!");
       setRunning(false);
     }
-  }, [options]);
+  }, [options, winConditions]); // Added winConditions here
 
   useEffect(() => {
     checkWinner();
